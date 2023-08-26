@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { connectWallet } from '../utils/connectToMetamask';
-import Registry from '@/build/contracts/Registry.json'
+import Registry from '../utils/Registry.json'
 
 import Navbar from '@/components/Navbar';
 import RegistryForm from '@/components/RegistryForm';
