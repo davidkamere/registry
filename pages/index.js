@@ -147,14 +147,14 @@ function Home() {
             contentLabel="Register Land Modal"
             style={customStyles}
           >
-              <div className='flex justify-end text-red-800 hover:cursor-pointer'>
-                <button onClick={() => setModalIsOpen(false)}>
-                  <span className='font-bold'>x</span>
-                </button>
-              </div>
-              <div className='p-10'>
-                <RegistryForm registerLand={registerLand} />
-              </div>
+                <div className='flex justify-end text-red-800 hover:cursor-pointer'>
+                  <button onClick={() => setModalIsOpen(false)}>
+                    <span className='font-bold'>x</span>
+                  </button>
+                </div>
+                <div className='p-10'>
+                  <RegistryForm registerLand={registerLand} />
+                </div>
             
           </Modal>
           <div className='mt-5'>
