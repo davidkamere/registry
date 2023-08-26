@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { connectWallet } from '../utils/connectToMetamask';
 
+import { connectWallet } from '../utils/connectToMetamask';
 import Registry from '../build/contracts/Registry.json'
 
 import Navbar from '@/components/Navbar';
@@ -10,34 +10,63 @@ import Listing from '@/components/Listing';
 import { propertyAtom } from '@/recoil/atoms/propertyAtom';
 import { useSetRecoilState } from 'recoil';
 
+import Modal from 'react-modal';
+Modal.setAppElement('#root');
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
 
 function Home() {
-  const [contract, setContract] = useState(null);
-  const [transactions, setTransactions] = useState(null);
+
   const setProperties = useSetRecoilState(propertyAtom);
   const [account, setAccount] = useState(null);
 
-  
-
   const [smartContract, setSmartContract] = useState(null);
 
-  const [transactionCount, setTransactionCount] = useState([]);
-  const [propertyCount, setPropertyCount] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   useEffect(() => {
-    connectWallet()
-    loadBlockChainData()
+      connectWallet()
+      getAccount()
+      loadBlockChainData()
+
+      const updateDetails = () => {
+        getAccount()
+        loadBlockChainData()
+      }
+
+      window.addEventListener('mousemove', updateDetails)
+
+      return () => window.removeEventListener('mousemove', updateDetails)
+
   }, []);
+  
+
+  
+
+  const getAccount = async () => {
+      const web3 = window.web3
+      // Load account
+      const accounts = await web3.eth.getAccounts()
+        .catch((err) => {
+          console.log(err)
+        })
+
+      setAccount(accounts[0])
+  }
 
 
   const loadBlockChainData = async () => {
-    const web3 = window.web3
-    // Load account
-    const accounts = await web3.eth.getAccounts()
-    setAccount(accounts[0])
+    
     const networkId = await web3.eth.net.getId()
     const networkData = Registry.networks[networkId]
 
@@ -45,11 +74,7 @@ function Home() {
         const smartContract = new web3.eth.Contract(Registry.abi, networkData.address)
         setSmartContract(smartContract)
 
-        const transactionCount = await smartContract.methods.transactionCount().call()
         const propertyCount = await smartContract.methods.propCount().call()
-
-        setTransactionCount(transactionCount)
-        setPropertyCount(propertyCount)
 
         const propertiesArray = [];
         for (let i = 1; i <= propertyCount; i++) {
@@ -58,24 +83,12 @@ function Home() {
         }
         setProperties(propertiesArray);
 
-        const transactionsArray = [];
-        for (let i = 1; i <= transactionCount; i++) {
-          const transaction = await smartContract.methods.transactions(i).call();
-          transactionsArray.push(transaction);
-        }
-        setTransactions(transactionsArray);
-
         setLoading(false)
         
     } else {
-        window.alert('Marketplace contract not deployed to detected network.')
+        window.alert('Registry contract not deployed to detected network.')
     }
   }
-
-  const refreshPage = () => {
-    window.location.reload();
-  }
-
 
   
   // Add new land to the blockchain
@@ -85,7 +98,12 @@ function Home() {
       .send({ from: account })
       .once('receipt', (receipt) => {
         setLoading(false)
-        refreshPage()
+        loadBlockChainData()
+        setModalIsOpen(false)
+      })
+      .catch((err) => {
+        console.log(err)
+        setLoading(false)
       })
     
   }
@@ -94,8 +112,13 @@ function Home() {
     setLoading(true)
     smartContract.methods.buyProperty(id)
       .send({ from: account, value: price })
+      .once('error', (error) => {
+        console.log(error)
+        setLoading(false)
+      })
       .once('receipt', (receipt) => {
         setLoading(false)
+        loadBlockChainData()
       })
     
   }
@@ -106,6 +129,7 @@ function Home() {
       .send({ from: account })
       .once('receipt', (receipt) => {
         setLoading(false)
+        loadBlockChainData()
       })
     
   }
@@ -113,15 +137,31 @@ function Home() {
 
 
   return (
-    <div>
+    <div id="root">
       <Navbar account={account}/>
       {!loading ? (
         <div className="flex flex-col items-center justify-center">
-          <div className='mt-12'>
-            <RegistryForm registerLand={registerLand} />
-          </div>
-          <div className='mt-32'>
-            <Listing/>
+          <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={() => setModalIsOpen(false)}
+            contentLabel="Register Land Modal"
+            style={customStyles}
+          >
+              <div className='flex justify-end text-red-800 hover:cursor-pointer'>
+                <button onClick={() => setModalIsOpen(false)}>
+                  <span className='font-bold'>x</span>
+                </button>
+              </div>
+              <div className='p-10'>
+                <RegistryForm registerLand={registerLand} />
+              </div>
+            
+          </Modal>
+          <div className='mt-5'>
+            <Listing  account={account} buyLand={buyLand} sellLand={sellLand}/>
+            <div className='mt-5 mb-10 flex justify-center'>
+              <button className="bg-red-600 text-white font-bold px-4 py-2 rounded-md hover:cursor-pointer" onClick={() => setModalIsOpen(true)}>Register New Land</button>
+            </div>
           </div>
         </div>
       ) : (

@@ -18,7 +18,7 @@ const Navbar = ({account}) => {
            <div >
                 <div className='flex flex-row gap-x-10'>
                     {/* <Link href='/listing'><div className="transition ease-in-out delay-150 text-[#aaeec4] border border-black p-4 bg-black rounded font-bold hover:cursor-pointer">Current Listing</div></Link> */}
-                    <Link href='/transactions'><div className="transition ease-in-out delay-150 text-[#aaeec4] border border-black p-4 bg-black rounded  font-bold hover:cursor-pointer">Transaction History</div></Link>
+                    <Link href='/transactions'><div className="transition ease-in-out delay-150 text-[#aaeec4] border border-black p-4 hover:bg-black rounded  font-bold hover:cursor-pointer">Transaction History</div></Link>
                 </div>
                 
            </div>
