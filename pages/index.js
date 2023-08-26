@@ -10,6 +10,9 @@ import Listing from '@/components/Listing';
 import { propertyAtom } from '@/recoil/atoms/propertyAtom';
 import { useSetRecoilState } from 'recoil';
 
+
+
+
 import Modal from 'react-modal';
 Modal.setAppElement('#root');
 
@@ -49,9 +52,8 @@ function Home() {
       return () => window.removeEventListener('mousemove', updateDetails)
 
   }, []);
-  
 
-  
+
 
   const getAccount = async () => {
       const web3 = window.web3
@@ -110,8 +112,10 @@ function Home() {
 
   const buyLand = (id, price) => {
     setLoading(true)
+    const priceToEth = web3.utils.toWei((Number(price) * 0.0000043).toString(), 'ether')
+    console.log(priceToEth)
     smartContract.methods.buyProperty(id)
-      .send({ from: account, value: price })
+      .send({ from: account, value: priceToEth })
       .once('error', (error) => {
         console.log(error)
         setLoading(false)
@@ -125,6 +129,10 @@ function Home() {
 
   const sellLand = (id, price) => {
     setLoading(true)
+
+    // convert to usd then to ETH
+
+
     smartContract.methods.sellProperty(id, price)
       .send({ from: account })
       .once('receipt', (receipt) => {
@@ -134,7 +142,6 @@ function Home() {
     
   }
   
-
 
   return (
     <div id="root">
