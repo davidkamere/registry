@@ -60,7 +60,7 @@ const Transactions = () => {
             }
         }
 
-        console.log(transactions)
+
         return (
             <div>
                 <Navbar />

@@ -8,7 +8,6 @@ const TransactionList = ({transactions, account}) => {
 
     const properties = transactions
 
-    console.log(properties)
 
     // convert unix to time
     const convertToTime = (unixTimestamp) => {
