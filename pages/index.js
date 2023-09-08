@@ -113,7 +113,7 @@ function Home() {
   const buyLand = (id, price) => {
     setLoading(true)
     const priceToEth = web3.utils.toWei((Number(price) * 0.0000043).toString(), 'ether')
-    console.log(priceToEth)
+    
     smartContract.methods.buyProperty(id)
       .send({ from: account, value: priceToEth })
       .once('error', (error) => {
@@ -131,9 +131,9 @@ function Home() {
     setLoading(true)
 
     // convert to usd then to ETH
+    const priceToEth = web3.utils.toWei((Number(price) * 0.0000043).toString(), 'ether')
 
-
-    smartContract.methods.sellProperty(id, price)
+    smartContract.methods.sellProperty(id, priceToEth)
       .send({ from: account })
       .once('receipt', (receipt) => {
         setLoading(false)
