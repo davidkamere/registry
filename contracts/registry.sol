@@ -144,6 +144,8 @@ contract Registry is Ownable{
         property memory _land= properties[_propertyId];
         // require that the seller is the land owner
         require(msg.sender == _land._addr);
+        // change the owner of the land to the blockchain address
+        _land._addr = address(0);
         _land.sold = false;
     }
 
