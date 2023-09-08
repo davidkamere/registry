@@ -86,7 +86,10 @@ const Listing = ({account, buyLand, sellLand}) => {
                                             </td>
                                         ) : (
                                             <td className="px-6 py-4 text-red-400">
-                                                {account === property._addr ? "You own this property" : "Sold"}
+                                                {account === property._addr ?
+                                                    <Sell sellLand={sellLand} propId={property.id} propPrice={property.price} /> :
+                                                    "Sold"
+                                                }
                                             </td>
                                         )
                                    
