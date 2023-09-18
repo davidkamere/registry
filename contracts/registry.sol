@@ -83,7 +83,7 @@ contract Registry is Ownable{
     function regProperty(string memory name, string memory location, string memory holder_name, string memory lr_no, uint holder_id,uint price) public {
         //push each property to the properties array
         require(!regToAvailable[lr_no]);
-        bool pd = false;
+        bool pd = true;
         // add property count
         propCount++;
         transactionCount++;
@@ -140,13 +140,14 @@ contract Registry is Ownable{
         emit LogSold(_propertyId);
     }
 
-    function sellProperty (uint _propertyId) public view{
+    function sellProperty (uint _propertyId) public {
         property memory _land= properties[_propertyId];
         // require that the seller is the land owner
         require(msg.sender == _land._addr);
         // change the owner of the land to the blockchain address
-        _land._addr = address(0);
         _land.sold = false;
+
+        properties[_propertyId] = _land;
     }
 
 

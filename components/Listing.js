@@ -11,7 +11,7 @@ const Sell = ({sellLand, propId, propPrice}) => {
     }
 
     return (
-        <div className="bg-red-600 text-black font-bold px-4 py-2 rounded-md hover:cursor-pointer" onClick={handleSale}>
+        <div className="bg-red-600  font-bold px-4 py-2 rounded-md hover:cursor-pointer text-white" onClick={handleSale}>
             Sell
         </div>
     )
@@ -22,7 +22,7 @@ const Listing = ({account, buyLand, sellLand}) => {
     const properties = useRecoilValue(propertyAtom)
     const [loading, setLoading] = useState(false);
 
- 
+    console.log("properties", properties)
     return (
         <div>
             <div className="py-14 tracking-wide">
@@ -86,9 +86,9 @@ const Listing = ({account, buyLand, sellLand}) => {
                                             </td>
                                         ) : (
                                             <td className="px-6 py-4 text-red-400">
-                                                {account === property._addr ?
+                                                {property.sold && account === property._addr?
                                                     <Sell sellLand={sellLand} propId={property.id} propPrice={property.price} /> :
-                                                    "Sold"
+                                                    <div></div>
                                                 }
                                             </td>
                                         )
